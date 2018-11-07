@@ -1,0 +1,35 @@
+<html>
+<head>
+    <title>demo chat with socket.io</title>
+    <link rel="stylesheet" type="text/css" href="layout.css"/>
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+    <script src="socket.io/socket.io.js"></script>
+    <script src="main.js"></script>
+</head>
+<body>
+<div id="wrapper" >
+    <div id="loginForm">
+        <h3>Enter your name:</h3>
+        <input type="text" id="txtUsername"/>
+        <button  id="btnRegister">Register</button>
+    </div>
+    <div id="chatForm">
+        <div id="left">
+            <div id="boxTitle">User online</div>
+            <div id="boxContent">
+            </div>
+        </div>
+        <div id="right">
+            <div id="sayHi"><span id="currentUser">Son</span>
+                <input type="button" id="btnLogout" value="Logout"/>
+            </div>
+            <div id="listMessages"></div>
+            <div id="notification"></div>
+
+            <input type="text" id="txtMessage"/>
+            <input type="button" id="btnSendMessage" value="Send"/>
+        </div>
+    </div>
+</div>
+</body>
+</html>

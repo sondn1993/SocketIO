@@ -1,0 +1,49 @@
+
+#wrapper {
+    width: 600px;
+    margin: auto;
+}
+#txtUsername{
+    background-color: transparent;
+    border: solid 1px black;
+}
+
+#left{
+    min-height: 300px;
+    width: 30%; float: left;
+    background-color: lightgreen
+}
+
+#right{
+    min-height: 300px;
+    width: 70%; float: right;
+    background-color: #d4f9f8;
+}
+
+#boxTitle{
+    border: 1px solid black;
+    padding:  5px;
+    text-align: center;
+    font-weight: bold;
+}
+
+#boxContent{
+    border: 1px solid black;
+    border-top: none;
+    padding: 5px;
+    text-align: center;
+}
+
+#sayHi{
+    text-align: right;
+}
+
+#listMessages{
+    height: 230px;
+    background-color: chocolate;
+    margin-bottom: 15px;
+}
+#txtMessage{
+    background-color: transparent;
+    border: 1px solid black;
+}
