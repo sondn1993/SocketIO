@@ -17,14 +17,27 @@ io.on("connection", function(socket){
         console.log(socket.id + " disconnected");
     });
 
-    socket.on("client-send-Username", function(data){
-        if(userList.indexOf(data) < 0){
-            userList.push(data);
-            socket.Username = data;
-            socket.emit("server-send-register-success", data);
+    socket.on("client-send-register", function(data){
+        console.log(data.username);
+        if(userList.indexOf(data.username) < 0 && data.password == '123'){
+            userList.push(data.username);
+            socket.Username = data.username;
+            socket.emit("server-send-register-success", data.username);
             io.sockets.emit("server-send-userlist", userList);
         }else{
             socket.emit("server-send-register-fail");
+        }
+    });
+
+    socket.on("client-send-login", function(data){
+        console.log(data.username);
+        if(userList.indexOf(data.username) < 0 && data.password == '123'){
+            userList.push(data.username);
+            socket.Username = data.username;
+            socket.emit("server-send-login-success", data.username);
+            io.sockets.emit("server-send-userlist", userList);
+        }else{
+            socket.emit("server-send-login-fail");
         }
     });
 

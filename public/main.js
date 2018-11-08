@@ -1,5 +1,15 @@
 var socket = io("http://localhost:3000");
 
+socket.on("server-send-login-fail", function(data){
+    alert("Đăng nhập thất bại!!!");
+});
+
+socket.on("server-send-login-success", function(data){
+    $('#currentUser').html(data);
+    $('#loginForm').hide();
+    $('#chatForm').show();
+});
+
 socket.on("server-send-register-fail", function(data){
     alert("Đăng ký thất bại!!!");
 });
@@ -35,7 +45,15 @@ $(document).ready(function(){
     $('#chatForm').hide();
 
     $('#btnRegister').click(function(){
-        socket.emit("client-send-Username", $('#txtUsername').val());
+        var username = $('#txtName').val();
+        var password =  $('#txtPass').val();
+        socket.emit("client-send-register", {username: username, password: password});
+    });
+
+    $('#btnLogin').click(function(){
+        var username = $('#txtUsername').val();
+        var password =  $('#txtPassword').val();
+        socket.emit("client-send-login", {username: username, password: password});
     });
 
     $('#btnLogout').click(function(){
@@ -59,4 +77,8 @@ $(document).ready(function(){
     $('#txtMessage').focusout(function(){
         socket.emit("client-stop-typing");
     });
+
+    $('.message a').click(function(){
+        $('form').animate({height: "toggle", opacity: "toggle"}, "slow");
+     });
 });
