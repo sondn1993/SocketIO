@@ -6,13 +6,15 @@
 
 #left{
     min-height: 300px;
-    width: 30%; float: left;
+    width: 30%; 
+    float: left;
     background-color: lightgreen
 }
 
 #right{
     min-height: 300px;
-    width: 70%; float: right;
+    width: 70%; 
+    float: right;
     background-color: #d4f9f8;
 }
 
@@ -39,6 +41,7 @@
     background-color: chocolate;
     margin-bottom: 15px;
 }
+
 #txtMessage{
     background-color: transparent;
     border: 1px solid black;

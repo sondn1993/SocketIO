@@ -8,10 +8,13 @@ var server = require("http").Server(app);
 var io = require("socket.io")(server);
 server.listen(3000);
 
-var userList = ['aaa'];
+var userList = ['sondn'];
+var maxId = 1;
 
 io.on("connection", function(socket){
     console.log(socket.id + " connected");
+    socket.join('PublicRoom');
+    socket.ListRoom = [{id: 'PublicRoom' , name : 'PublicRoom'}];
 
     socket.on('disconnect', function(){
         console.log(socket.id + " disconnected");
@@ -23,6 +26,7 @@ io.on("connection", function(socket){
             userList.push(data.username);
             socket.Username = data.username;
             socket.emit("server-send-register-success", data.username);
+            socket.emit("server-send-listroom", socket.ListRoom);
             io.sockets.emit("server-send-userlist", userList);
         }else{
             socket.emit("server-send-register-fail");
@@ -31,10 +35,11 @@ io.on("connection", function(socket){
 
     socket.on("client-send-login", function(data){
         console.log(data.username);
-        if(userList.indexOf(data.username) < 0 && data.password == '123'){
+        if(userList.indexOf(data.username) >= 0 && data.password == '123'){
             userList.push(data.username);
             socket.Username = data.username;
             socket.emit("server-send-login-success", data.username);
+            socket.emit("server-send-listroom", socket.ListRoom);
             io.sockets.emit("server-send-userlist", userList);
         }else{
             socket.emit("server-send-login-fail");
@@ -49,7 +54,7 @@ io.on("connection", function(socket){
 
     socket.on("client-send-message", function(data){
         console.log(socket.Username + " chatted " + data);
-        io.sockets.emit("server-send-message", {sender: socket.Username, message: data});
+        socket.broadcast.emit("server-send-message", {sender: socket.Username, message: data});
         //socket.emit("Chat", data);
         //io.broadcast.emit("Chat", data);
     });

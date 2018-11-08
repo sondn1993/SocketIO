@@ -9,6 +9,7 @@ socket.on("server-send-login-success", function(data){
     $('#currentUser').html(data);
     $('#loginForm').hide();
     $('#chatForm').show();
+    $('#listMessages').html('');
 });
 
 socket.on("server-send-register-fail", function(data){
@@ -19,6 +20,7 @@ socket.on("server-send-register-success", function(data){
     $('#currentUser').html(data);
     $('#loginForm').hide();
     $('#chatForm').show();
+    $('#listMessages').html('');
 });
 
 socket.on("server-send-userlist", function(data){
@@ -29,16 +31,23 @@ socket.on("server-send-userlist", function(data){
     listUser = data;
 });
 
+socket.on("server-send-listroom", function(data){
+    $('#currentRoom').html("<span style='font-size: 16px; font-weight: bold'>" + data[0].name + "<i class='fa fa-angle-down'></i></span>");
+    data.forEach(function(element) {
+        $('#listRooms tbody').append("<tr><td><img src='../images/room_icon.png' class='img-circle' width='40' height='40' style='float:left; margin-right: 5px;'><span> " + element.id + "</span></td></tr>");
+    });
+});
+
 socket.on("server-send-message", function(data){
-    $('#listMessages').append("<div class='ms'>" + data.sender + ": " + data.message +"</div>");
+    $('#listMessages').append("<div class='chat-me'>" + data.sender + ": " + data.message +"</div>");
 });
 
 socket.on("server-send-start-typing", function(data){
-    $('#notification').html(data);
+    $('#chat-notification').html("<div class='chat-notification'>" + data +"</div>");
 });
 
 socket.on("server-send-stop-typing", function(){
-    $('#notification').html('');
+    $('#chat-notification').html('');
 });
 
 $(document).ready(function(){
@@ -65,13 +74,27 @@ $(document).ready(function(){
 
     $('#btnSendMessage').click(function(){
         if($('#txtMessage').val() == ''){
-            alert('plz enter message!!!');
             return;
         }
+        $('#listMessages').scrollTop($('#listMessages')[0].scrollHeight - $('#listMessages')[0].clientHeight);
         socket.emit("client-send-message", $('#txtMessage').val());
+        $('#listMessages').append("<div class='chat-you'>" +   $('#txtMessage').val() + " :" +$('#currentUser').text() +"</div>");
+        $('#txtMessage').val(''); 
     });
 
-    $('#txtMessage').focusin(function(){
+    $('#txtMessage').keypress(function (e) {
+        if (e.which == 13){
+            if($('#txtMessage').val() == ''){
+                return;
+            }
+            $('#listMessages').scrollTop($('#listMessages')[0].scrollHeight - $('#listMessages')[0].clientHeight);
+            socket.emit("client-send-message", $('#txtMessage').val());
+            $('#listMessages').append("<div class='chat-you'>" +   $('#txtMessage').val() + " :" +$('#currentUser').text() +"</div>");
+        }
+        $('#txtMessage').val(''); 
+    });
+
+    $('#txtMessage').click(function(){
         socket.emit("client-start-typing");
     });
 
@@ -79,7 +102,13 @@ $(document).ready(function(){
         socket.emit("client-stop-typing");
     });
 
-    $('.message a').click(function(){
-        $('form').animate({height: "toggle", opacity: "toggle"}, "slow");
-     });
+    $('#toLoginForm').click(function(){
+        $('#register-form').hide();
+        $('#login-form').show();
+    });
+
+    $('#toRegisterForm').click(function(){
+        $('#register-form').show();
+        $('#login-form').hide();
+    });
 });
