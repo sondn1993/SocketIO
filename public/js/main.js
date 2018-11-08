@@ -1,6 +1,10 @@
 var socket = io("http://localhost:3000");
 
 var listUser = [];
+socket.on("server-send-connected", function(data){
+    $('#socketId').val(data);
+});
+
 socket.on("server-send-login-fail", function(data){
     alert("Đăng nhập thất bại!!!");
 });
@@ -29,6 +33,7 @@ socket.on("server-send-userlist", function(data){
     //     $('#boxContent').append("<div class='useronline'>" + element + "</div");
     // });
     listUser = data;
+    alert(listUser.length);
 });
 
 socket.on("server-send-listroom", function(data){
@@ -57,13 +62,15 @@ $(document).ready(function(){
     $('#btnRegister').click(function(){
         var username = $('#txtName').val();
         var password =  $('#txtPass').val();
-        socket.emit("client-send-register", {username: username, password: password});
+        var socketId =  $('#socketId').val();
+        socket.emit("client-send-register", {username: username, password: password, socketid : socketId});
     });
 
     $('#btnLogin').click(function(){
         var username = $('#txtUsername').val();
         var password =  $('#txtPassword').val();
-        socket.emit("client-send-login", {username: username, password: password});
+        var socketId =  $('#socketId').val();
+        socket.emit("client-send-login", {username: username, password: password, socketid : socketId});
     });
 
     $('#btnLogout').click(function(){

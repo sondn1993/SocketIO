@@ -8,35 +8,55 @@ var server = require("http").Server(app);
 var io = require("socket.io")(server);
 server.listen(3000);
 
-var userList = ['sondn'];
+var userList = [{username : 'sondn', socketid : '123', password : '123'}, {username : 'son', socketid : '1234', password : '123'}];
 var maxId = 1;
 
 io.on("connection", function(socket){
     console.log(socket.id + " connected");
     socket.join('PublicRoom');
+    socket.emit("server-send-connected", socket.id);
     socket.ListRoom = [{id: 'PublicRoom' , name : 'PublicRoom'}];
 
     socket.on('disconnect', function(){
         console.log(socket.id + " disconnected");
+        userList.forEach(function(element, index) {
+            if(element.username == socket.Username){
+                userList.splice(index, 1);
+                return;
+            }
+        });
     });
 
     socket.on("client-send-register", function(data){
         console.log(data.username);
-        if(userList.indexOf(data.username) < 0 && data.password == '123'){
-            userList.push(data.username);
+        var check = false;
+        userList.forEach(function(element) {
+            if(element.username == data.username && element.password == data.password){
+                check = true;
+                return;
+            }
+        });
+        if(check){
+            socket.emit("server-send-register-fail");
+        }else{
+            userList.push({username : data.username, socketid: data.socketid, password: data.password});
             socket.Username = data.username;
             socket.emit("server-send-register-success", data.username);
             socket.emit("server-send-listroom", socket.ListRoom);
             io.sockets.emit("server-send-userlist", userList);
-        }else{
-            socket.emit("server-send-register-fail");
         }
     });
 
     socket.on("client-send-login", function(data){
         console.log(data.username);
-        if(userList.indexOf(data.username) >= 0 && data.password == '123'){
-            userList.push(data.username);
+        var check = false;
+        userList.forEach(function(element) {
+            if(element.username == data.username && element.password == data.password){
+                check = true;
+                return;
+            }
+        });
+        if(check){
             socket.Username = data.username;
             socket.emit("server-send-login-success", data.username);
             socket.emit("server-send-listroom", socket.ListRoom);
