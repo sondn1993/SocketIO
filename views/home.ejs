@@ -13,6 +13,7 @@
     <link rel="stylesheet" href="../css/style.css"/>
 	<script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
     <script src="socket.io/socket.io.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
     <script src="../js/main.js"></script>
     <title>Demo chat with socket.io</title>
 </head>
@@ -24,12 +25,14 @@
                     <input type="text" placeholder="username" id="txtName"/>
                     <input type="password" placeholder="password" id="txtPass"/>
                     <input type="text" placeholder="email address"/>
+                    <span id="register-message" style="color: red"></span>
                     <button id="btnRegister">create</button>
                     <p class="message">Already registered? <a href="#" id="toLoginForm">Sign In</a></p>
                 </div>
                 <div class="login-form" id="login-form">
                     <input type="text" minlength="5" placeholder="username" id="txtUsername"/>
                     <input type="password" placeholder="password" id="txtPassword"/>
+                    <span id="login-message" style="color: red"></span>
                     <button id="btnLogin">login</button>
                     <p class="message">Not registered? <a href="#" id="toRegisterForm">Create an account</a></p>
                 </div>
@@ -43,7 +46,7 @@
                     <img src="../images/avatar.jpg" class="img-circle" width="40" height="40"> 
                 </div>
                 <div class="status">
-                    <div class="name"><span id="currentUser">Son</span>
+                    <div class="name"><span id="currentUser" style="color: #00AFF0">Son</span>
 						<button id="btnLogout"><i class="fas fa-sign-out-alt"></i></button></div>
                     <div class="status-content">Mây của trời hãy để gió cuốn đi</div>
                 </div>
@@ -78,101 +81,43 @@
                     </div>
                 </div>
                 <div class="action-chat">
-                    <span><i class="fa fa-video"></i></span>
-                    <span><i class="fa fa-phone"></i></span>
-                    <span id="btnCreateRoom"><i class="fa fa-user-plus"></i></span>
+                    <span id="btnCreateRoom"><i class="fa fa-user-plus fa-2x" style="color:#00AFF0;"></i></span>
                 </div>
             </div>
             <div class="box-chat" id="listMessages">
-                <div class="chat-me">
-                    <span>Anh ăn cơm chưa????</span><br>
-                    <span>Ahihi</span>
-                </div>
-                <div class="chat-you">
-                    <span>Anh ăn rồi. Em ăn chưa??</span><br>
-                    <span>Mai có đi làm không?</span>
-                </div>
-                <div class="chat-me">
-                    <span>Anh ăn cơm chưa????</span><br>
-                    <span>Ahihi</span>
-                </div>
-                <div class="chat-you">
-                    <span>Anh ăn rồi. Em ăn chưa??</span><br>
-                    <span>Mai có đi làm không?</span>
-                </div>
-                <div class="chat-me">
-                    <span>Anh ăn cơm chưa????</span><br>
-                    <span>Ahihi</span>
-                </div>
-                <div class="chat-you">
-                    <span>Anh ăn rồi. Em ăn chưa??</span><br>
-                    <span>Mai có đi làm không?</span>
-                </div>
-                <div class="chat-me">
-                    <span>Anh ăn cơm chưa????</span><br>
-                    <span>Ahihi</span>
-                </div>
-                <div class="chat-you">
-                    <span>Anh ăn rồi. Em ăn chưa??</span><br>
-                    <span>Mai có đi làm không?</span>
-                </div>
-                <div class="chat-me">
-                    <span>Anh ăn cơm chưa????</span><br>
-                    <span>Ahihi</span>
-                </div>
-                <div class="chat-you">
-                    <span>Anh ăn rồi. Em ăn chưa??</span><br>
-                    <span>Mai có đi làm không?</span>
-                </div>
-                <div class="chat-me">
-                    <span>Anh ăn cơm chưa????</span><br>
-                    <span>Ahihi</span>
-                </div>
-                <div class="chat-you">
-                    <span>Anh ăn rồi. Em ăn chưa??</span><br>
-                    <span>Mai có đi làm không?</span>
-                </div>
-                <div class="chat-me">
-                    <span>Anh ăn cơm chưa????</span><br>
-                    <span>Ahihi</span>
-                </div>
-                <div class="chat-you">
-                    <span>Anh ăn rồi. Em ăn chưa??</span><br>
-                    <span>Mai có đi làm không?</span>
-                </div>
-                <div class="chat-me">
-                    <span>Anh ăn cơm chưa????</span><br>
-                    <span>Ahihi</span>
-                </div>
-                <div class="chat-you">
-                    <span>Anh ăn rồi. Em ăn chưa??</span><br>
-                    <span>Mai có đi làm không?</span>
-                </div>
-                <div class="chat-me">
-                    <span>Anh ăn cơm chưa????</span><br>
-                    <span>Ahihi</span>
-                </div>
-                <div class="chat-you">
-                    <span>Anh ăn rồi. Em ăn chưa??</span><br>
-                    <span>Mai có đi làm không?</span>
-                </div>
-                <div class="chat-me">
-                    <span>Anh ăn cơm chưa????</span><br>
-                    <span>Ahihi</span>
-                </div>
-                <div class="chat-you">
-                    <span>Anh ăn rồi. Em ăn chưa??</span><br>
-                    <span>Mai có đi làm không?</span>
-                </div>
             </div>
 			<div id="chat-notification"></div>
             <div class="input-chat">
-                <input id="txtMessage" placeholder="type something"></input>
+                <input id="txtMessage" placeholder="type something"/>
 				<button id="btnSendMessage"><i class="fas fa-paper-plane"></i></button>
             </div>
         </div>
     </div>
 
     <input type="hidden" id="socketId"/>
+
+    <!-- Modal -->
+    <div class="modal fade" id="createRoomModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">add some users to this group</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <input id="txtGroupName" class="form-control" placeholder="enter group name "/>
+                    <br></br>
+                    <form id="listUser">
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" id="btnClose">Create</button>
+                </div>
+            </div>
+        </div>
+    </div>
 </body>
 </html>

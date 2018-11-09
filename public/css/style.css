@@ -88,6 +88,12 @@ table>tbody>tr>td {
     width: 75%;
     float: left;
 }
+
+.action-chat{
+    width: 25%;
+    float: left;
+}
+
 .input-chat {
     bottom: 5px;
     height: 30px;

@@ -6,7 +6,7 @@ socket.on("server-send-connected", function(data){
 });
 
 socket.on("server-send-login-fail", function(data){
-    alert("Đăng nhập thất bại!!!");
+    $('#login-message').html('Đăng nhập thất bại !!!');
 });
 
 socket.on("server-send-login-success", function(data){
@@ -17,7 +17,7 @@ socket.on("server-send-login-success", function(data){
 });
 
 socket.on("server-send-register-fail", function(data){
-    alert("Đăng ký thất bại!!!");
+    $('#register-message').html('Đăng ký thất bại !!!');
 });
 
 socket.on("server-send-register-success", function(data){
@@ -28,19 +28,16 @@ socket.on("server-send-register-success", function(data){
 });
 
 socket.on("server-send-userlist", function(data){
-    // $('#boxContent').html("");
-    // data.forEach(function(element) {
-    //     $('#boxContent').append("<div class='useronline'>" + element + "</div");
-    // });
     listUser = data;
-    alert(listUser.length);
 });
 
-socket.on("server-send-listroom", function(data){
-    $('#currentRoom').html("<span style='font-size: 16px; font-weight: bold'>" + data[0].name + "<i class='fa fa-angle-down'></i></span>");
-    data.forEach(function(element) {
-        $('#listRooms tbody').append("<tr><td><img src='../images/room_icon.png' class='img-circle' width='40' height='40' style='float:left; margin-right: 5px;'><span> " + element.id + "</span></td></tr>");
+socket.on("server-send-new room", function(data){
+    $('#currentRoom').html("<span style='font-size: 16px; font-weight: bold'>" + data.name + "<i class='fa fa-angle-down'></i></span>");
+    $('#listRooms > tbody  > tr').each(function() {
+        $(this).css({backgroundColor: 'white'});
     });
+    $('#listRooms tbody').prepend("<tr style='background-color: #def3e3;'><td><img src='../images/room_icon.png' class='img-circle' width='40px' height='40px' style='float:left; margin-right: 5px;'><div style='margin-top: 10px;'><strong> " + data.name + "</strong></div></td></tr>");
+    $('#listMessages').html('');
 });
 
 socket.on("server-send-message", function(data){
@@ -117,5 +114,28 @@ $(document).ready(function(){
     $('#toRegisterForm').click(function(){
         $('#register-form').show();
         $('#login-form').hide();
+    });
+
+    $('#btnCreateRoom').click(function(){
+        $('#listUser').html('');
+        listUser.forEach(function(element, index) {
+            if(element.username != $('#currentUser').text()){
+                $('#listUser').append("<div class='form-check'><input type='checkbox' class='form-check-input' id='" + element.socketid +"'><label class='form-check-label' for='" + element.socketid +"'>" + element.username + "</label></div>");
+            }
+        });
+        $('#createRoomModal').modal();
+    });
+
+    $('#btnClose').click(function(){
+        var groupName = $('#txtGroupName').val();
+        var listSocket = [];
+        listSocket.push($('#socketId').val());
+        $('input:checkbox.form-check-input').each(function () {
+            if(this.checked){
+                listSocket.push(this.getAttribute("id"));
+            }
+        });
+        $('#createRoomModal').modal('hide');
+        socket.emit("client-send-create-room", {name: groupName, listSocket : listSocket});
     });
 });
