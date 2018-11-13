@@ -14,13 +14,13 @@ var maxId = 1;
 io.on("connection", function(socket){
     console.log(socket.id + " connected");
     socket.emit("server-send-connected", socket.id);
-    socket.Room = {id: 'PublicRoom' , name : 'PublicRoom'};
+    socket.Room = {roomId: 'PublicRoom' , roomName : 'PublicRoom'};
     socket.join('PublicRoom');
 
     socket.on('disconnect', function(){
         console.log(socket.id + " disconnected");
         userList.forEach(function(element, index) {
-            if(element.username == socket.Username){
+            if(element.username == socket.username){
                 userList.splice(index, 1);
                 return;
             }
@@ -38,8 +38,8 @@ io.on("connection", function(socket){
         if(check){
             socket.emit("server-send-register-fail");
         }else{
-            userList.push({username : data.username, socketid: data.socketid, password: data.password});
-            socket.Username = data.username;
+            userList.push({username : data.username, socketId: data.socketId, password: data.password});
+            socket.username = data.username;
             socket.emit("server-send-register-success", data.username);
             socket.emit("server-send-new room", socket.Room);
             io.sockets.emit("server-send-userlist", userList);
@@ -55,7 +55,7 @@ io.on("connection", function(socket){
             }
         });
         if(check){
-            socket.Username = data.username;
+            socket.username = data.username;
             socket.emit("server-send-login-success", data.username);
             socket.emit("server-send-new room", socket.Room);
             io.sockets.emit("server-send-userlist", userList);
@@ -65,28 +65,27 @@ io.on("connection", function(socket){
     });
 
     socket.on("client-send-logout", function(){
-        userList.splice(userList.indexOf(socket.Username), 1);
-        socket.Username = "";
+        userList.splice(userList.indexOf(socket.username), 1);
+        socket.username = "";
         socket.broadcast.emit("server-send-userlist", userList);
     });
 
     socket.on("client-send-create-room", function(data){
-        socket.Room = {id: data.name , name : data.name};
+        socket.Room = {roomId: data.roomName , roomName : data.roomName};
         //console.log(io);
         socket.join(data.name);
         data.listSocket.forEach(function(element, index) {
-            io.sockets.connected[element].join(data.name);
+            io.sockets.connected[element].join(data.roomName);
         });
-        io.sockets.in(data.name).emit("server-send-new room", {id: data.name, name: data.name});
+        io.sockets.in(data.roomName).emit("server-send-new room", {roomId: data.roomName, roomName: data.roomName});
     });
 
-
     socket.on("client-send-message", function(data){
-        socket.broadcast.emit("server-send-message", {sender: socket.Username, message: data});
+        socket.broadcast.in(data.roomId).emit("server-send-message", {sender: socket.username, message: data.message, roomId : data.roomId});
     });
 
     socket.on("client-start-typing", function(){
-        socket.broadcast.emit("server-send-start-typing", socket.Username + ' is typing');
+        socket.broadcast.emit("server-send-start-typing", socket.username + ' is typing');
     });
 
     socket.on("client-stop-typing", function(){
