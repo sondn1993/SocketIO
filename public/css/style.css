@@ -138,6 +138,16 @@ table>tbody>tr>td {
     text-align: right;
 }
 
+.chat-all {
+    height: auto;
+    margin-bottom: 5px;
+    padding: 5px;
+    text-align: center;
+}
+
+#listRooms{
+    cursor: pointer;
+}
 @import url(https://fonts.googleapis.com/css?family=Roboto:300);
 
 .login-page {

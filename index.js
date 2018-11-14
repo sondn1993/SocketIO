@@ -84,12 +84,12 @@ io.on("connection", function(socket){
         socket.broadcast.in(data.roomId).emit("server-send-message", {sender: socket.username, message: data.message, roomId : data.roomId});
     });
 
-    socket.on("client-start-typing", function(){
-        socket.broadcast.emit("server-send-start-typing", socket.username + ' is typing');
+    socket.on("client-start-typing", function(data){
+        socket.broadcast.in(data).emit("server-send-start-typing", {username: socket.username, roomId : data});
     });
 
-    socket.on("client-stop-typing", function(){
-        socket.broadcast.emit("server-send-stop-typing");
+    socket.on("client-stop-typing", function(data){
+        socket.broadcast.in(data).emit("server-send-stop-typing", {username: socket.username, roomId : data});
     });
 });
 

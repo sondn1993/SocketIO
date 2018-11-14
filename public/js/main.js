@@ -36,7 +36,7 @@ socket.on("server-send-new room", function(data){
     $('#listRooms > tbody  > tr').each(function() {
         $(this).css({backgroundColor: 'white'});
     });
-    $('#listRooms tbody').prepend("<tr id='" + data.roomId +"' style='background-color: #def3e3;'><td><img src='../images/room_icon.png' class='img-circle' width='40px' height='40px' style='float:left; margin-right: 5px;'><div style='margin-top: 10px;'><strong> "+ data.roomName +"</strong></div></td></tr>");
+    $('#listRooms tbody').prepend("<tr id='" + data.roomId +"' style='background-color: #def3e3;' onclick='changeRoom(this);'><td><img src='../images/room_icon.png' class='img-circle' width='40px' height='40px' style='float:left; margin-right: 5px;'><div style='margin-top: 10px;'><strong> "+ data.roomName +"</strong></div></td></tr>");
     $('#listMessages').html('');
 });
 
@@ -50,15 +50,19 @@ socket.on("server-send-message", function(data){
             $(this).css({backgroundColor: 'white'});
         }
     });
-    $('#listRooms tbody').prepend("<tr id='" + data.roomId +"' style='background-color: #def3e3;'><td><img src='../images/room_icon.png' class='img-circle' width='40px' height='40px' style='float:left; margin-right: 5px;'><div style='margin-top: 10px;'><strong> " + data.roomId + "</strong></div></td></tr>");
+    $('#listRooms tbody').prepend("<tr id='" + data.roomId +"' style='background-color: #def3e3;' onclick='changeRoom(this);'><td><img src='../images/room_icon.png' class='img-circle' width='40px' height='40px' style='float:left; margin-right: 5px;'><div style='margin-top: 10px;'><strong> " + data.roomId + "</strong></div></td></tr>");
 });
 
 socket.on("server-send-start-typing", function(data){
-    $('#chat-notification').html("<div class='chat-notification'>" + data +"</div>");
+    if($('#currentRoomId').val() == data.roomId){
+        $('#chat-notification').html("<div class='chat-notification'>" + data.username +" is typing</div>");
+    }
 });
 
-socket.on("server-send-stop-typing", function(){
-    $('#chat-notification').html('');
+socket.on("server-send-stop-typing", function(data){
+    if($('#currentRoomId').val() == data.roomId){
+        $('#chat-notification').html('');
+    }
 });
 
 $(document).ready(function(){
@@ -94,7 +98,8 @@ $(document).ready(function(){
         $('#listMessages').scrollTop($('#listMessages')[0].scrollHeight - $('#listMessages')[0].clientHeight);
         socket.emit("client-send-message", {message : message , roomId : roomId});
         $('#listMessages').append("<div class='chat-you'>" +   $('#txtMessage').val() + " :" +$('#currentUser').text() +"</div>");
-        $('#txtMessage').val(''); 
+        $('#txtMessage').val('');
+        $('#txtMessage').blur(); 
     });
 
     $('#txtMessage').keypress(function (e) {
@@ -108,15 +113,18 @@ $(document).ready(function(){
             socket.emit("client-send-message", {message : message , roomId : roomId});
             $('#listMessages').append("<div class='chat-you'>" +   $('#txtMessage').val() + " :" +$('#currentUser').text() +"</div>");
             $('#txtMessage').val(''); 
+            $('#txtMessage').blur(); 
         }
     });
 
     $('#txtMessage').click(function(){
-        socket.emit("client-start-typing");
+        var roomId = $('#currentRoomId').val();
+        socket.emit("client-start-typing", roomId);
     });
 
     $('#txtMessage').focusout(function(){
-        socket.emit("client-stop-typing");
+        var roomId = $('#currentRoomId').val();
+        socket.emit("client-stop-typing", roomId);
     });
 
     $('#toLoginForm').click(function(){
@@ -133,7 +141,6 @@ $(document).ready(function(){
         $('#listUser').html('');
         listUser.forEach(function(element, index) {
             if(element.username != $('#currentUser').text()){
-                alert(element.socketId);
                 $('#listUser').append("<div class='form-check'><input type='checkbox' class='form-check-input' id='" + element.socketId +"'><label class='form-check-label' for='" + element.socketId +"'>" + element.username + "</label></div>");
             }
         });
@@ -149,7 +156,22 @@ $(document).ready(function(){
                 listSocket.push(this.getAttribute("id"));
             }
         });
+        $('#txtGroupName').val('');
         $('#createRoomModal').modal('hide');
         socket.emit("client-send-create-room", {roomName: groupName, listSocket : listSocket});
     });
 });
+
+function changeRoom(room){
+    var roomId = room.getAttribute("id");
+    $('#listMessages').append("");
+    $('#currentRoom').html("<span style='font-size: 16px; font-weight: bold'>" + roomId + "<i class='fa fa-angle-down'></i></span><input type='hidden' id='currentRoomId' value='" + roomId +"' />");
+    $('#listRooms > tbody  > tr').each(function() {
+        if(this.getAttribute("id") == roomId){
+            $(this).remove();
+        }else{
+            $(this).css({backgroundColor: 'white'});
+        }
+    });
+    $('#listRooms tbody').prepend("<tr id='" + roomId +"' style='background-color: #def3e3;' onclick='changeRoom(this);'><td><img src='../images/room_icon.png' class='img-circle' width='40px' height='40px' style='float:left; margin-right: 5px;'><div style='margin-top: 10px;'><strong> " + roomId + "</strong></div></td></tr>");
+}
