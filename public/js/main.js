@@ -66,22 +66,6 @@ socket.on("server-send-stop-typing", function(data){
 });
 
 $(document).ready(function(){
-    $('#loginForm').show();
-    $('#chatForm').hide();
-
-    $('#btnRegister').click(function(){
-        var username = $('#txtName').val();
-        var password =  $('#txtPass').val();
-        var socketId =  $('#socketId').val();
-        socket.emit("client-send-register", {username: username, password: password, socketId : socketId});
-    });
-
-    $('#btnLogin').click(function(){
-        var username = $('#txtUsername').val();
-        var password =  $('#txtPassword').val();
-        var socketId =  $('#socketId').val();
-        socket.emit("client-send-login", {username: username, password: password, socketId : socketId});
-    });
 
     $('#btnLogout').click(function(){
         socket.emit("client-send-logout");
@@ -125,16 +109,6 @@ $(document).ready(function(){
     $('#txtMessage').focusout(function(){
         var roomId = $('#currentRoomId').val();
         socket.emit("client-stop-typing", roomId);
-    });
-
-    $('#toLoginForm').click(function(){
-        $('#register-form').hide();
-        $('#login-form').show();
-    });
-
-    $('#toRegisterForm').click(function(){
-        $('#register-form').show();
-        $('#login-form').hide();
     });
 
     $('#btnCreateRoom').click(function(){
